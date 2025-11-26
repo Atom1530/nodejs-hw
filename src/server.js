@@ -3,8 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
 import 'dotenv/config';
-import { getEnvVar } from './helper/getEnvVar';
-import { ENV_VARS } from './constants/envVars';
+import { getEnvVar } from './helper/getEnvVar.js';
+import { ENV_VARS } from './constants/envVars.js';
 
 const app = express();
 
