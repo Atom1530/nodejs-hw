@@ -1,19 +1,21 @@
 // src/server.js
 import express from 'express';
 import cors from 'cors';
-import pinoHttp from 'pino-http';
 import 'dotenv/config';
 import { getEnvVar } from './helper/getEnvVar.js';
 import { ENV_VARS } from './constants/envVars.js';
+
+import { connectToMongoDB } from './db/connectToMongoDb.js';
+import { setupLogger } from './middleware/logger.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandlerMiddleware } from './middleware/errorHandler.js';
 
 const app = express();
 
 // ===== middleware =====
 
-app.use(pinoHttp());
-
+app.use(setupLogger());
 app.use(cors());
-
 app.use(express.json());
 
 // GET /notes
@@ -38,29 +40,24 @@ app.get('/test-error', () => {
 });
 
 // ===== middleware для 404 =====
+app.use(notFoundHandler);
 
-app.use((req, res) => {
-  res.status(404).json({
-    message: 'Route not found',
-  });
-});
-
-// ===== middleware для помилок 500 =====
-
-app.use((err, req, res, next) => {
-  if (req.log) {
-    req.log.error(err);
-  }
-
-  res.status(500).json({
-    message: err.message ?? 'Internal server error',
-  });
-});
+// ===== middleware для 500 =====
+app.use(errorHandlerMiddleware);
 
 // ===== запуск сервера =====
-
 const PORT = getEnvVar(ENV_VARS.PORT, 3000);
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectToMongoDB();
+    app.listen(PORT, () => {
+      console.log(` Server is running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to start server:', err.message);
+    process.exit(1);
+  }
+};
+
+startServer();
