@@ -1,3 +1,4 @@
+// src/db/models/notes.js
 import { model, Schema } from 'mongoose';
 
 const noteSchema = new Schema(
@@ -5,7 +6,7 @@ const noteSchema = new Schema(
     title: { type: String, required: true },
     content: { type: String, trim: true, default: '' },
     tag: {
-      type: Number,
+      type: String,
       enum: [
         'Work',
         'Personal',
@@ -28,4 +29,4 @@ const noteSchema = new Schema(
   },
 );
 
-export const Notes = model('note', noteSchema);
+export const Notes = model('Note', noteSchema);

@@ -9,30 +9,17 @@ import { connectToMongoDB } from './db/connectToMongoDb.js';
 import { setupLogger } from './middleware/logger.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandlerMiddleware } from './middleware/errorHandler.js';
+import notesRouter from './routes/notesRoutes.js';
 
 const app = express();
 
 // ===== middleware =====
-
 app.use(setupLogger());
 app.use(cors());
 app.use(express.json());
 
-// GET /notes
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: 'Retrieved all notes',
-  });
-});
-
-// GET /notes/:noteId
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-
-  res.status(200).json({
-    message: `Retrieved note with ID: ${noteId}`,
-  });
-});
+// ===== роути нотаток  =====
+app.use(notesRouter);
 
 // GET /test-error
 app.get('/test-error', () => {
