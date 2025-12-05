@@ -1,7 +1,7 @@
 // controllers/notesController.js';
 
 import createHttpError from 'http-errors';
-import { Notes } from '../model/notes.js';
+import { Notes } from '../models/notes.js';
 
 export const getAllNotes = async (req, res, next) => {
   try {
