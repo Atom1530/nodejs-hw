@@ -13,3 +13,5 @@ export const setupLogger = (settings = {}) =>
     },
     ...settings,
   });
+
+export const logger = setupLogger();
