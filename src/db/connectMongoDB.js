@@ -4,7 +4,7 @@ const clientOptions = {
   serverApi: { version: '1', strict: true, deprecationErrors: true },
 };
 
-export const connectToMongoDB = async () => {
+export const connectMongoDB = async () => {
   try {
     const uri = process.env.MONGO_URL;
 
