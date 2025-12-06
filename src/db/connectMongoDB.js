@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
+import { Notes } from './models/note.js';
 
 const clientOptions = {
-  serverApi: { version: '1', strict: true, deprecationErrors: true },
+  serverApi: { version: '1', strict: false, deprecationErrors: true },
 };
 
-export const connectToMongoDB = async () => {
+export const connectMongoDB = async () => {
   try {
     const uri = process.env.MONGO_URL;
 
@@ -14,12 +15,15 @@ export const connectToMongoDB = async () => {
     });
 
     await mongoose.connection.db.admin().command({ ping: 1 });
+
     console.log(
       '✅ MongoDB connection established successfully. DB:',
       mongoose.connection.name,
     );
+    await Notes.syncIndexes();
+    console.log('Indexes synced successfully');
   } catch (err) {
-    console.error('Error connecting to mongoDB', err.message);
+    console.error('❌ Failed to connect to MongoDB', err.message);
     process.exit(1);
   }
 };

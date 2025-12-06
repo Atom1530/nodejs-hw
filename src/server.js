@@ -2,6 +2,8 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
+import { errors } from 'celebrate';
+
 import { getEnvVar } from './helper/getEnvVar.js';
 import { ENV_VARS } from './constants/envVars.js';
 
@@ -26,6 +28,9 @@ app.get('/test-error', () => {
   throw new Error('Simulated server error');
 });
 
+// ✅ обработка ошибок валидации celebrate
+app.use(errors());
+
 // ===== middleware для 404 =====
 app.use(notFoundHandler);
 
@@ -38,6 +43,7 @@ const PORT = getEnvVar(ENV_VARS.PORT, 3000);
 const startServer = async () => {
   try {
     await connectMongoDB();
+
     app.listen(PORT, () => {
       console.log(` Server is running on port ${PORT}`);
     });

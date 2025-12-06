@@ -1,17 +1,44 @@
-// controllers/notesController.js';
+// controllers/notesController.js
 
 import createHttpError from 'http-errors';
 import { Notes } from '../models/note.js';
 
 export const getAllNotes = async (req, res, next) => {
   try {
-    const notes = await Notes.find();
-    res.status(200).json(notes);
+    const { tag, search, page = 1, perPage = 10 } = req.query;
+
+    const pageNum = Number(page) || 1;
+    const perPageNum = Number(perPage) || 10;
+    const skip = (pageNum - 1) * perPageNum;
+
+    const notesQuery = Notes.find();
+
+    if (tag) {
+      notesQuery.where('tag').equals(tag);
+    }
+
+    if (search) {
+      notesQuery.where({ $text: { $search: search } });
+    }
+
+    const [totalNotes, notes] = await Promise.all([
+      notesQuery.clone().countDocuments(),
+      notesQuery.clone().skip(skip).limit(perPageNum),
+    ]);
+
+    const totalPages = Math.ceil(totalNotes / perPageNum);
+
+    res.status(200).json({
+      page: pageNum,
+      perPage: perPageNum,
+      totalNotes,
+      totalPages,
+      notes,
+    });
   } catch (error) {
     next(error);
   }
 };
-
 export const getNoteById = async (req, res, next) => {
   try {
     const { noteId } = req.params;
