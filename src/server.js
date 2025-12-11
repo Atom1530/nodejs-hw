@@ -2,55 +2,48 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
+import { errors } from 'celebrate';
+
 import { getEnvVar } from './helper/getEnvVar.js';
 import { ENV_VARS } from './constants/envVars.js';
 
-import { connectToMongoDB } from './db/connectToMongoDb.js';
-import { setupLogger } from './middleware/logger.js';
+import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
-import { errorHandlerMiddleware } from './middleware/errorHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import notesRouter from './routes/notesRoutes.js';
+import { logger } from './middleware/logger.js';
 
 const app = express();
 
 // ===== middleware =====
-
-app.use(setupLogger());
+app.use(logger);
 app.use(cors());
 app.use(express.json());
 
-// GET /notes
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: 'Retrieved all notes',
-  });
-});
-
-// GET /notes/:noteId
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-
-  res.status(200).json({
-    message: `Retrieved note with ID: ${noteId}`,
-  });
-});
+// ===== роути нотаток  =====
+app.use(notesRouter);
 
 // GET /test-error
 app.get('/test-error', () => {
   throw new Error('Simulated server error');
 });
 
+// ✅ СНАЧАЛА ошибки валидации celebrate
+app.use(errors());
+
 // ===== middleware для 404 =====
 app.use(notFoundHandler);
 
 // ===== middleware для 500 =====
-app.use(errorHandlerMiddleware);
+app.use(errorHandler);
 
 // ===== запуск сервера =====
 const PORT = getEnvVar(ENV_VARS.PORT, 3000);
 
 const startServer = async () => {
   try {
-    await connectToMongoDB();
+    await connectMongoDB();
+
     app.listen(PORT, () => {
       console.log(` Server is running on port ${PORT}`);
     });
