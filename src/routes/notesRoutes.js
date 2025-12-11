@@ -1,3 +1,5 @@
+//src/routes/notesRoutes.js
+
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
 

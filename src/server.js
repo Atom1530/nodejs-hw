@@ -16,7 +16,6 @@ import { logger } from './middleware/logger.js';
 const app = express();
 
 // ===== middleware =====
-
 app.use(logger);
 app.use(cors());
 app.use(express.json());
@@ -29,7 +28,7 @@ app.get('/test-error', () => {
   throw new Error('Simulated server error');
 });
 
-// ✅ обработка ошибок валидации celebrate
+// ✅ СНАЧАЛА ошибки валидации celebrate
 app.use(errors());
 
 // ===== middleware для 404 =====

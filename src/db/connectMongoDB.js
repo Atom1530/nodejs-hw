@@ -1,5 +1,7 @@
+//src/db/connectMongoDB.js
+
 import mongoose from 'mongoose';
-import { Notes } from './models/note.js';
+import { Note } from '../models/note.js';
 
 const clientOptions = {
   serverApi: { version: '1', strict: false, deprecationErrors: true },
@@ -20,7 +22,7 @@ export const connectMongoDB = async () => {
       '✅ MongoDB connection established successfully. DB:',
       mongoose.connection.name,
     );
-    await Notes.syncIndexes();
+    await Note.syncIndexes();
     console.log('Indexes synced successfully');
   } catch (err) {
     console.error('❌ Failed to connect to MongoDB', err.message);

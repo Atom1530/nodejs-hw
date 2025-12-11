@@ -1,3 +1,4 @@
+//src/validations/notesValidation.js
 import { Joi, Segments } from 'celebrate';
 import { isValidObjectId } from 'mongoose';
 import { TAGS } from '../constants/tags.js';
