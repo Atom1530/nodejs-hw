@@ -11,7 +11,9 @@ import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notesRouter from './routes/notesRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import { logger } from './middleware/logger.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -20,8 +22,13 @@ app.use(logger);
 app.use(cors());
 app.use(express.json());
 
+// ===== cookie-parser =====
+app.use(cookieParser());
+
 // ===== роути нотаток  =====
 app.use(notesRouter);
+// ===== роути користувачів  =====
+app.use(authRoutes);
 
 // GET /test-error
 app.get('/test-error', () => {
