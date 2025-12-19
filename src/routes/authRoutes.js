@@ -1,21 +1,20 @@
-// src/routes/authRoutes.js
-
 import { Router } from 'express';
+import { celebrate } from 'celebrate';
 import {
-  loginUser,
-  refreshUserSession,
   registerUser,
+  loginUser,
   logoutUser,
+  refreshUserSession,
 } from '../controllers/authController.js';
 import {
-  loginUserSchema,
   registerUserSchema,
+  loginUserSchema,
 } from '../validations/authValidation.js';
 
 const authRouter = Router();
 
-authRouter.post('/auth/register', registerUserSchema, registerUser);
-authRouter.post('/auth/login', loginUserSchema, loginUser);
+authRouter.post('/auth/register', celebrate(registerUserSchema), registerUser);
+authRouter.post('/auth/login', celebrate(loginUserSchema), loginUser);
 authRouter.post('/auth/logout', logoutUser);
 authRouter.post('/auth/refresh', refreshUserSession);
 
