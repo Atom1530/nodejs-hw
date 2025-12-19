@@ -14,6 +14,7 @@ import notesRouter from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import { logger } from './middleware/logger.js';
 import cookieParser from 'cookie-parser';
+import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(cookieParser());
 app.use(notesRouter);
 // ===== роути користувачів  =====
 app.use(authRoutes);
+app.use(userRoutes);
 
 // GET /test-error
 app.get('/test-error', () => {
