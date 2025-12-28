@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
+import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
 
 import { getEnvVar } from './helper/getEnvVar.js';
@@ -10,11 +11,11 @@ import { ENV_VARS } from './constants/envVars.js';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
 import { errorHandler } from './middleware/errorHandler.js';
+
 import notesRouter from './routes/notesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import { logger } from './middleware/logger.js';
-import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
+import { logger } from './middleware/logger.js';
 
 const app = express();
 
@@ -22,13 +23,10 @@ const app = express();
 app.use(logger);
 app.use(cors());
 app.use(express.json());
-
-// ===== cookie-parser =====
 app.use(cookieParser());
 
-// ===== роути нотаток  =====
+// ===== роуты =====
 app.use(notesRouter);
-// ===== роути користувачів  =====
 app.use(authRoutes);
 app.use(userRoutes);
 
@@ -37,13 +35,13 @@ app.get('/test-error', () => {
   throw new Error('Simulated server error');
 });
 
-// ✅ СНАЧАЛА ошибки валидации celebrate
-app.use(errors());
-
-// ===== middleware для 404 =====
+// ===== 404 =====
 app.use(notFoundHandler);
 
-// ===== middleware для 500 =====
+// ✅ celebrate errors AFTER 404
+app.use(errors());
+
+// ===== общий обработчик ошибок =====
 app.use(errorHandler);
 
 // ===== запуск сервера =====
